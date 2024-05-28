@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandalas Interactivas</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .mandala-container {
+            margin-top: 30px;
+        }
+        .palette {
+            display: flex;
+            margin-top: 10px;
+        }
+        .color {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid #000;
+        }
+        svg {
+            border: 2px solid #000;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mandalas</h1>
+
+    <!-- Primera Mandala -->
+    <div class="mandala-container">
+        <h2>Primera Mandala</h2>
+        <div id="palette1" class="palette"></div>
+        <svg id="mandala1" width="400" height="400" viewBox="0 0 400 400">
+            <circle cx="200" cy="200" r="190" fill="white" stroke="black" stroke-width="2"/>
+            <!-- Círculos concéntricos aquí -->
+        </svg>
+    </div>
+
+    <!-- Segunda Mandala -->
+    <div class="mandala-container">
+        <h2>Segunda Mandala</h2>
+        <div id="palette2" class="palette"></div>
+        <svg id="mandala2" width="400" height="400" viewBox="0 0 400 400">
+            <circle cx="200" cy="200" r="190" fill="white" stroke="black" stroke-width="2"/>
+            <!-- Forma más compleja aquí -->
+        </svg>
+    </div>
+
+    <script>
+        // Paleta de colores
+        const colors = ['#FF5733', '#FFC0CB', '#3357FF', '#33FF57', '#FF33FF', '#33FFFF', '#FFA07A', '#FFD700'];
+
+        // Función para crear la paleta de colores
+        function createPalette(containerId, paletteId) {
+            const paletteContainer = document.getElementById(paletteId);
+            colors.forEach(color => {
+                const colorDiv = document.createElement('div');
+                colorDiv.classList.add('color');
+                colorDiv.style.backgroundColor = color;
+                colorDiv.addEventListener('click', () => {
+                    window[containerId] = color;
+                });
+                paletteContainer.appendChild(colorDiv);
+            });
+        }
+
+        // Función para añadir interactividad a la mandala
+        function addInteractivity(mandalaId, containerId) {
+            const mandala = document.getElementById(mandalaId);
+            mandala.addEventListener('click', event => {
+                if (event.target.tagName === 'circle' || event.target.tagName === 'path') {
+                    event.target.setAttribute('fill', window[containerId]);
+                }
+            });
+        }
+
+        // Crear la paleta de colores y añadir interactividad a la primera mandala
+        let selectedColor1 = '#FF5733'; // Color inicial: rosa suave
+        createPalette('selectedColor1', 'palette1');
+        addInteractivity('mandala1', 'selectedColor1');
+
+        // Añadir círculos concéntricos a la primera mandala
+        const centerX1 = 200;
+        const centerY1 = 200;
+        const initialRadius1 = 160;
+        const distance1 = 30; // 3 cm in pixels
+
+        for (let r = initialRadius1; r > 0; r -= distance1) {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', centerX1);
+            circle.setAttribute('cy', centerY1);
+            circle.setAttribute('r', r);
+            circle.setAttribute('fill', 'white');
+            circle.setAttribute('stroke', 'black');
+            circle.setAttribute('stroke-width', '2');
+            document.getElementById('mandala1').appendChild(circle);
+        }
+
+        // Crear la paleta de colores y añadir interactividad a la segunda mandala
+        let selectedColor2 = '#3357FF'; // Color inicial: verde
+        createPalette('selectedColor2', 'palette2');
+        addInteractivity('mandala2', 'selectedColor2');
+
+        // Añadir una forma más compleja a la segunda mandala
+        const mandala2 = document.getElementById('mandala2');
+        const numPetals = 16;
+        const angle = (2 * Math.PI) / numPetals;
+
+        for (let i = 0; i < numPetals; i++) {
+            const petalPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const startX = centerX1 + 100 * Math.cos(i * angle);
+            const startY = centerY1 + 100 * Math.sin(i * angle);
+            const endX = centerX1 + 100 * Math.cos((i + 1) * angle);
+            const endY = centerY1 + 100 * Math.sin((i + 1) * angle);
+
+            const pathData = `
+                M ${centerX1} ${centerY1}
+                L ${startX} ${startY}
+                A 100 100 0 0 1 ${endX} ${endY}
+                Z
+            `;
+            petalPath.setAttribute('d', pathData);
+            petalPath.setAttribute('fill', 'white');
+            petalPath.setAttribute('stroke', 'black');
+            petalPath.setAttribute('stroke-width', '2');
+            mandala2.appendChild(petalPath);
+        }
+    </script>
+</body>
+</html>
